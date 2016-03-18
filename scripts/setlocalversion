@@ -33,7 +33,14 @@ scm_version()
 	local short
 	short=false
 
-	if test -e .scmversion || test -e $srctree/.scmversion; then
+	# Check for .scmversion in output dir first.
+	if test -e .scmversion; then
+		cat .scmversion
+		return
+	fi
+
+	cd "$srctree"
+	if test -e .scmversion; then
 		cat .scmversion
 		return
 	fi
@@ -41,7 +48,6 @@ scm_version()
 		short=true
 	fi
 
-	cd "$srctree"
 	# Check for git and a git repo.
 	if test -z "$(git rev-parse --show-cdup 2>/dev/null)" &&
 	   head=`git rev-parse --verify --short HEAD 2>/dev/null`; then
